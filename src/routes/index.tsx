@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { FeedView } from "@/components/cigarrats/FeedView";
 import { StatsView } from "@/components/cigarrats/StatsView";
 import { RankingView } from "@/components/cigarrats/RankingView";
@@ -81,7 +82,7 @@ function CigarRatsApp() {
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-full bg-white overflow-hidden flex items-center justify-center border border-gray-700">
               <img
-                src="https://api.dicebear.com/7.x/shapes/svg?seed=CigarRats&backgroundColor=f97316"
+                src={logoAsset.url}
                 alt="Logo do CigarRats"
                 className="w-full h-full object-contain p-1"
               />
