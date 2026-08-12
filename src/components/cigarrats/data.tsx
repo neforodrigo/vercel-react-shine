@@ -6,7 +6,7 @@ export const INITIAL_POSTS: Post[] = [
     id: 1,
     user: {
       name: "Beatriz Almeida",
-      username: "@carlos_smoke",
+      username: "@bia_smoke",
       avatar: "https://i.pravatar.cc/150?u=carlos",
     },
     time: "Há 10 min",
@@ -16,7 +16,7 @@ export const INITIAL_POSTS: Post[] = [
     liked: false,
     comments: 3,
     image:
-      "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?auto=format&fit=crop&q=80&w=800",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROAXG23pCb4rzSQPfkD42vEXWwRdyoP-Sr7vC2GGjxO8srJucaHOmBucY&s=10",
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ export const INITIAL_POSTS: Post[] = [
     liked: true,
     comments: 8,
     image:
-      "https://images.unsplash.com/photo-1436076863939-06870fe779c2?auto=format&fit=crop&q=80&w=800",
+      "https://i.pinimg.com/236x/d6/d7/ce/d6d7cef4ac3ba4aaab52403889cc182c.jpg",
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ export const INITIAL_POSTS: Post[] = [
     liked: false,
     comments: 0,
     image:
-      "https://images.unsplash.com/photo-1526685714488-66a98f1f72da?auto=format&fit=crop&q=80&w=800",
+      "https://thumbs.dreamstime.com/b/cigarros-e-cigarro-que-encontram-se-dentro-e-em-torno-da-bandeja-de-cinza-de-vidro-na-superf%C3%ADcie-de-madeira-vista-de-cima-de-89027438.jpg",
   },
 ];
 
