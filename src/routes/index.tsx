@@ -15,13 +15,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Rede social para registrar cigarros, identificar gatilhos, acompanhar metas diárias e ver o ranking semanal.",
+          "Rede social para registrar cigarros, acompanhar metas diárias e ver o ranking semanal.",
       },
       { property: "og:title", content: "CigarRats — Registre e acompanhe seus momentos" },
       {
         property: "og:description",
         content:
-          "Registre momentos, marque gatilhos como café ou cerveja e acompanhe suas metas diárias.",
+          "Registre seus momentos de relaxamento.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
