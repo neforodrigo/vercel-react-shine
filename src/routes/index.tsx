@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { FeedView } from "@/components/cigarrats/FeedView";
 import { StatsView } from "@/components/cigarrats/StatsView";
 import { RankingView } from "@/components/cigarrats/RankingView";
