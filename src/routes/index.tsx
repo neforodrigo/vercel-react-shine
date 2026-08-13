@@ -42,6 +42,26 @@ function CigarRatsApp() {
     dailyLimit: 10,
     streak: 12,
   });
+  const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+      if (stored) setProfile({ ...INITIAL_PROFILE, ...JSON.parse(stored) });
+    } catch {
+      /* ignore corrupted storage */
+    }
+  }, []);
+
+  const saveProfile = (next: Profile) => {
+    setProfile(next);
+    try {
+      window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore quota errors */
+    }
+  };
+
 
   const toggleLike = (postId: number) => {
     setPosts((prev) =>
