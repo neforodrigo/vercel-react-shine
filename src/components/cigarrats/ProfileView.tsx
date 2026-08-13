@@ -61,6 +61,30 @@ export function ProfileView({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Profile>(profile);
   const [error, setError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Escolha um arquivo de imagem.");
+      return;
+    }
+    if (file.size > MAX_AVATAR_MB * 1024 * 1024) {
+      setError(`A foto deve ter no máximo ${MAX_AVATAR_MB}MB.`);
+      return;
+    }
+
+    try {
+      const dataUrl = await resizeToSquare(file);
+      setDraft((prev) => ({ ...prev, avatar: dataUrl }));
+      setError(null);
+    } catch {
+      setError("Não foi possível processar a imagem.");
+    }
+  };
 
   const startEdit = () => {
     setDraft(profile);
