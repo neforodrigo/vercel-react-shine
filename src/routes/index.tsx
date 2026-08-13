@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FeedView } from "@/components/cigarrats/FeedView";
 import { StatsView } from "@/components/cigarrats/StatsView";
 import { RankingView } from "@/components/cigarrats/RankingView";
+import { ProfileView } from "@/components/cigarrats/ProfileView";
 import { LogModal } from "@/components/cigarrats/LogModal";
 import { BottomNav } from "@/components/cigarrats/BottomNav";
-import { INITIAL_POSTS } from "@/components/cigarrats/data";
-import type { NewLog, Post, UserStats } from "@/components/cigarrats/types";
+import { INITIAL_POSTS, INITIAL_PROFILE } from "@/components/cigarrats/data";
+import type { NewLog, Post, Profile, UserStats } from "@/components/cigarrats/types";
+
+const PROFILE_STORAGE_KEY = "cigarrats:profile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,6 +42,26 @@ function CigarRatsApp() {
     dailyLimit: 10,
     streak: 12,
   });
+  const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+      if (stored) setProfile({ ...INITIAL_PROFILE, ...JSON.parse(stored) });
+    } catch {
+      /* ignore corrupted storage */
+    }
+  }, []);
+
+  const saveProfile = (next: Profile) => {
+    setProfile(next);
+    try {
+      window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore quota errors */
+    }
+  };
+
 
   const toggleLike = (postId: number) => {
     setPosts((prev) =>
@@ -54,9 +77,9 @@ function CigarRatsApp() {
     const newPost: Post = {
       id: Date.now(),
       user: {
-        name: "Você",
-        username: "@seu_usuario",
-        avatar: "https://i.pravatar.cc/150?u=voce",
+        name: profile.name,
+        username: profile.username,
+        avatar: profile.avatar,
       },
       time: "Agora",
       text: newLog.text,
@@ -88,7 +111,7 @@ function CigarRatsApp() {
           </div>
           <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden border border-gray-700">
             <img
-              src="https://i.pravatar.cc/150?u=voce"
+              src={profile.avatar}
               alt="Seu perfil"
               className="w-full h-full object-cover"
             />
@@ -100,7 +123,7 @@ function CigarRatsApp() {
           {activeTab === "stats" && <StatsView stats={userStats} />}
           {activeTab === "ranking" && <RankingView />}
           {activeTab === "profile" && (
-            <div className="p-8 text-center text-gray-500 text-sm">Perfil em breve.</div>
+            <ProfileView profile={profile} onSave={saveProfile} />
           )}
         </main>
 

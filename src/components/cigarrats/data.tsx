@@ -1,5 +1,5 @@
-import { Coffee, Beer, Utensils, Cigarette, Wind, Users } from "lucide-react";
-import type { Post } from "./types";
+import { Coffee, Beer, Utensils, Cigarette, Wind, Users, Leaf, Flame } from "lucide-react";
+import type { Post, Profile } from "./types";
 
 export const INITIAL_POSTS: Post[] = [
   {
@@ -60,3 +60,18 @@ export const AVAILABLE_TAGS = [
   { id: "estresse", label: "Estresse", icon: <Wind size={16} /> },
   { id: "social", label: "Social/Festa", icon: <Users size={16} /> },
 ];
+
+export const SMOKE_OPTIONS = [
+  { id: "cigarro", label: "Cigarro", icon: <Cigarette size={16} /> },
+  { id: "maconha", label: "Maconha", icon: <Leaf size={16} /> },
+  { id: "tabaco", label: "Tabaco", icon: <Flame size={16} /> },
+];
+
+export const INITIAL_PROFILE: Profile = {
+  name: "Você",
+  username: "@seu_usuario",
+  birthDate: "",
+  city: "",
+  smokes: ["cigarro"],
+  avatar: "https://i.pravatar.cc/150?u=voce",
+};
