@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { Camera, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { Camera, X, Trash2 } from "lucide-react";
 import { AVAILABLE_TAGS } from "./data";
 import type { NewLog } from "./types";
+
+const MAX_SIZE_MB = 5;
 
 export function LogModal({
   onClose,
@@ -12,7 +14,9 @@ export function LogModal({
 }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [text, setText] = useState("");
-  const [hasImage, setHasImage] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleTag = (label: string) => {
     setSelectedTags((prev) =>
@@ -20,11 +24,34 @@ export function LogModal({
     );
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Escolha um arquivo de imagem.");
+      return;
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setError(`A imagem deve ter no máximo ${MAX_SIZE_MB}MB.`);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setError(null);
+      setImage(typeof reader.result === "string" ? reader.result : null);
+    };
+    reader.onerror = () => setError("Não foi possível ler a imagem.");
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex flex-col justify-end">
       <div className="flex-1" onClick={onClose} />
 
-      <div className="bg-gray-900 rounded-t-3xl p-5 border-t border-gray-800 animate-slide-up">
+      <div className="bg-gray-900 rounded-t-3xl p-5 border-t border-gray-800 animate-slide-up max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">Registrar Momento</h2>
           <button
@@ -68,23 +95,40 @@ export function LogModal({
         </div>
 
         <div className="mb-6">
-          <button
-            onClick={() => setHasImage(!hasImage)}
-            className={`w-full flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed transition-all ${
-              hasImage
-                ? "bg-green-500/10 border-green-500/50 text-green-400"
-                : "border-gray-700 bg-gray-950 text-gray-400 hover:bg-gray-800"
-            }`}
-          >
-            <Camera size={20} />
-            <span className="font-medium">
-              {hasImage ? "Foto anexada (Clique para remover)" : "Adicionar uma foto"}
-            </span>
-          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          {image ? (
+            <div className="relative rounded-xl overflow-hidden border border-gray-800">
+              <img src={image} alt="Pré-visualização da foto" className="w-full max-h-64 object-cover" />
+              <button
+                onClick={() => setImage(null)}
+                className="absolute top-2 right-2 p-2 bg-black/70 rounded-full text-gray-200 hover:bg-black transition"
+                aria-label="Remover foto"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed border-gray-700 bg-gray-950 text-gray-400 hover:bg-gray-800 transition-all"
+            >
+              <Camera size={20} />
+              <span className="font-medium">Adicionar uma foto</span>
+            </button>
+          )}
+
+          {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
         </div>
 
         <button
-          onClick={() => onSubmit({ text, tags: selectedTags, hasImage })}
+          onClick={() => onSubmit({ text, tags: selectedTags, image })}
           className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-orange-900/20"
         >
           Salvar Registro

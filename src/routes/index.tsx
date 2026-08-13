@@ -64,9 +64,7 @@ function CigarRatsApp() {
       likes: 0,
       liked: false,
       comments: 0,
-      image: newLog.hasImage
-        ? "https://images.unsplash.com/photo-1526685714488-66a98f1f72da?auto=format&fit=crop&q=80&w=800"
-        : null,
+      image: newLog.image,
     };
 
     setPosts((prev) => [newPost, ...prev]);

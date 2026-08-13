@@ -16,4 +16,4 @@ export type UserStats = {
   streak: number;
 };
 
-export type NewLog = { text: string; tags: string[]; hasImage: boolean };
+export type NewLog = { text: string; tags: string[]; image: string | null };
