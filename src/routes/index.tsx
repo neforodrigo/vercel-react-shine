@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FeedView } from "@/components/cigarrats/FeedView";
 import { StatsView } from "@/components/cigarrats/StatsView";
 import { RankingView } from "@/components/cigarrats/RankingView";
+import { ProfileView } from "@/components/cigarrats/ProfileView";
 import { LogModal } from "@/components/cigarrats/LogModal";
 import { BottomNav } from "@/components/cigarrats/BottomNav";
-import { INITIAL_POSTS } from "@/components/cigarrats/data";
-import type { NewLog, Post, UserStats } from "@/components/cigarrats/types";
+import { INITIAL_POSTS, INITIAL_PROFILE } from "@/components/cigarrats/data";
+import type { NewLog, Post, Profile, UserStats } from "@/components/cigarrats/types";
+
+const PROFILE_STORAGE_KEY = "cigarrats:profile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
