@@ -1,5 +1,5 @@
-import { Coffee, Beer, Utensils, Cigarette, Wind, Users } from "lucide-react";
-import type { Post } from "./types";
+import { Coffee, Beer, Utensils, Cigarette, Wind, Users, Leaf, Flame } from "lucide-react";
+import type { Post, Profile } from "./types";
 
 export const INITIAL_POSTS: Post[] = [
   {

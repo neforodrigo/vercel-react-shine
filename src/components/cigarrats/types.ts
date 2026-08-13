@@ -17,3 +17,12 @@ export type UserStats = {
 };
 
 export type NewLog = { text: string; tags: string[]; image: string | null };
+
+export type Profile = {
+  name: string;
+  username: string;
+  birthDate: string;
+  city: string;
+  smokes: string[];
+  avatar: string;
+};
