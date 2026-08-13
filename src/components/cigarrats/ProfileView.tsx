@@ -187,6 +187,36 @@ export function ProfileView({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative">
+              <img
+                src={draft.avatar}
+                alt="Pré-visualização da foto de perfil"
+                className="w-24 h-24 rounded-full border border-gray-800 object-cover"
+              />
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                aria-label="Alterar foto de perfil"
+                className="absolute -bottom-1 -right-1 p-2 bg-orange-600 hover:bg-orange-500 rounded-full text-white border-4 border-gray-950 transition"
+              >
+                <Camera size={16} />
+              </button>
+            </div>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              className="text-xs font-semibold text-orange-400 hover:text-orange-300"
+            >
+              Alterar foto
+            </button>
+          </div>
+
           <div>
             <label className={labelClass} htmlFor="profile-name">
               Nome
