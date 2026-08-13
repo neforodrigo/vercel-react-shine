@@ -77,9 +77,9 @@ function CigarRatsApp() {
     const newPost: Post = {
       id: Date.now(),
       user: {
-        name: "Você",
-        username: "@seu_usuario",
-        avatar: "https://i.pravatar.cc/150?u=voce",
+        name: profile.name,
+        username: profile.username,
+        avatar: profile.avatar,
       },
       time: "Agora",
       text: newLog.text,
@@ -111,7 +111,7 @@ function CigarRatsApp() {
           </div>
           <div className="w-8 h-8 rounded-full bg-gray-800 overflow-hidden border border-gray-700">
             <img
-              src="https://i.pravatar.cc/150?u=voce"
+              src={profile.avatar}
               alt="Seu perfil"
               className="w-full h-full object-cover"
             />
@@ -123,7 +123,7 @@ function CigarRatsApp() {
           {activeTab === "stats" && <StatsView stats={userStats} />}
           {activeTab === "ranking" && <RankingView />}
           {activeTab === "profile" && (
-            <div className="p-8 text-center text-gray-500 text-sm">Perfil em breve.</div>
+            <ProfileView profile={profile} onSave={saveProfile} />
           )}
         </main>
 
