@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { CalendarDays, Check, MapPin, Pencil, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { CalendarDays, Camera, Check, MapPin, Pencil, X } from "lucide-react";
 import { SMOKE_OPTIONS } from "./data";
 import type { Profile } from "./types";
+
+const MAX_AVATAR_MB = 5;
+const AVATAR_SIZE = 320;
 
 function formatBirthDate(value: string) {
   if (!value) return "Não informado";
@@ -9,6 +12,44 @@ function formatBirthDate(value: string) {
   if (!year || !month || !day) return value;
   return `${day}/${month}/${year}`;
 }
+
+// Recorta em quadrado e reduz para caber no armazenamento local.
+function resizeToSquare(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const side = Math.min(img.width, img.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = AVATAR_SIZE;
+      canvas.height = AVATAR_SIZE;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("canvas"));
+        return;
+      }
+      ctx.drawImage(
+        img,
+        (img.width - side) / 2,
+        (img.height - side) / 2,
+        side,
+        side,
+        0,
+        0,
+        AVATAR_SIZE,
+        AVATAR_SIZE,
+      );
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("load"));
+    };
+    img.src = url;
+  });
+}
+
 
 export function ProfileView({
   profile,
