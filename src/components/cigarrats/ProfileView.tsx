@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { CalendarDays, Check, MapPin, Pencil, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { CalendarDays, Camera, Check, MapPin, Pencil, X } from "lucide-react";
 import { SMOKE_OPTIONS } from "./data";
 import type { Profile } from "./types";
+
+const MAX_AVATAR_MB = 5;
+const AVATAR_SIZE = 320;
 
 function formatBirthDate(value: string) {
   if (!value) return "Não informado";
@@ -9,6 +12,44 @@ function formatBirthDate(value: string) {
   if (!year || !month || !day) return value;
   return `${day}/${month}/${year}`;
 }
+
+// Recorta em quadrado e reduz para caber no armazenamento local.
+function resizeToSquare(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const side = Math.min(img.width, img.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = AVATAR_SIZE;
+      canvas.height = AVATAR_SIZE;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("canvas"));
+        return;
+      }
+      ctx.drawImage(
+        img,
+        (img.width - side) / 2,
+        (img.height - side) / 2,
+        side,
+        side,
+        0,
+        0,
+        AVATAR_SIZE,
+        AVATAR_SIZE,
+      );
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("load"));
+    };
+    img.src = url;
+  });
+}
+
 
 export function ProfileView({
   profile,
@@ -20,6 +61,30 @@ export function ProfileView({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Profile>(profile);
   const [error, setError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Escolha um arquivo de imagem.");
+      return;
+    }
+    if (file.size > MAX_AVATAR_MB * 1024 * 1024) {
+      setError(`A foto deve ter no máximo ${MAX_AVATAR_MB}MB.`);
+      return;
+    }
+
+    try {
+      const dataUrl = await resizeToSquare(file);
+      setDraft((prev) => ({ ...prev, avatar: dataUrl }));
+      setError(null);
+    } catch {
+      setError("Não foi possível processar a imagem.");
+    }
+  };
 
   const startEdit = () => {
     setDraft(profile);
@@ -122,6 +187,36 @@ export function ProfileView({
         </div>
       ) : (
         <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative">
+              <img
+                src={draft.avatar}
+                alt="Pré-visualização da foto de perfil"
+                className="w-24 h-24 rounded-full border border-gray-800 object-cover"
+              />
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                aria-label="Alterar foto de perfil"
+                className="absolute -bottom-1 -right-1 p-2 bg-orange-600 hover:bg-orange-500 rounded-full text-white border-4 border-gray-950 transition"
+              >
+                <Camera size={16} />
+              </button>
+            </div>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              className="text-xs font-semibold text-orange-400 hover:text-orange-300"
+            >
+              Alterar foto
+            </button>
+          </div>
+
           <div>
             <label className={labelClass} htmlFor="profile-name">
               Nome
